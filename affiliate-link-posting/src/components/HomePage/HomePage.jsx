@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts } from '../../../redux/postsSlice';
+import { fetchPosts } from '../../../redux/postsReducer';
+import '../HomePage/HomePage.css';
 
 function HomePage() {
 	const dispatch = useDispatch();
@@ -12,19 +13,11 @@ function HomePage() {
 	}, [dispatch]);
 
 	return (
-		<div>
-			<h1>Affiliate Links</h1>
-			{postStatus === 'loading' ? (
-				<p>Loading...</p>
+		<div className='posts-container'>
+			{posts.length === 0 ? (
+				<p>There are no posts yet...</p>
 			) : (
-				<ul>
-					{posts.map((post) => (
-						<li key={post.id}>
-							<a href={post.link}>{post.title}</a>
-							<p>{post.description}</p>
-						</li>
-					))}
-				</ul>
+				<div>posts.map goes here</div>
 			)}
 		</div>
 	);

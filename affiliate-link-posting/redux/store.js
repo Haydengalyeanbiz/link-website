@@ -1,10 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit';
-import postsReducer from './postsSlice';
-import authReducer from './authSlice';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { thunk } from 'redux-thunk';
+import amazonReducer from '../redux/amazonReducer';
+import postsReducer from '../redux/postsReducer';
+import authReducer from '../redux/authReducer';
 
-export const store = configureStore({
-	reducer: {
-		posts: postsReducer,
-		auth: authReducer,
-	},
+const rootReducer = combineReducers({
+	amazon: amazonReducer,
+	posts: postsReducer,
+	user: authReducer,
 });
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+export default store;
