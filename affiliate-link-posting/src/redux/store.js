@@ -1,8 +1,8 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { thunk } from 'redux-thunk';
-import amazonReducer from '../redux/amazonReducer';
-import postsReducer from '../redux/postsReducer';
-import authReducer from '../redux/authReducer';
+import amazonReducer from './amazonReducer';
+import postsReducer from './postsReducer';
+import authReducer from './authReducer';
 
 const rootReducer = combineReducers({
 	amazon: amazonReducer,

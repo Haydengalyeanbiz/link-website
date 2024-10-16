@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPosts } from '../../../redux/postsReducer';
+import { fetchPosts } from '../../redux/postsReducer';
 import '../HomePage/HomePage.css';
 
 function HomePage() {

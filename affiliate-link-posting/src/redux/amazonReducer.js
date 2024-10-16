@@ -1,3 +1,5 @@
+import { getAmazonProductDetails } from './amazonAPI';
+
 // ? --------- ACTIONS -----------
 export const FETCH_AMAZON_PRODUCT_PENDING = 'FETCH_AMAZON_PRODUCT_PENDING';
 export const FETCH_AMAZON_PRODUCT_FULFILLED = 'FETCH_AMAZON_PRODUCT_FULFILLED';
@@ -20,9 +22,9 @@ export const fetchAmazonProductRejected = (error) => ({
 
 // ! --------- THUNKS -----------
 
+//? Thunk for Fetching Product Details
 export const fetchAmazonProduct = (affiliateLink) => async (dispatch) => {
-	const apiKey = import.meta.env.VITE_RAINFOREST_API_KEY;
-	const productId = extractProductIdFromLink(affiliateLink);
+	const productId = extractASINFromLink(affiliateLink);
 
 	if (!productId) {
 		return dispatch(
@@ -33,17 +35,7 @@ export const fetchAmazonProduct = (affiliateLink) => async (dispatch) => {
 	dispatch(fetchAmazonProductPending());
 
 	try {
-		const response = await axios.get('https://api.rainforestapi.com/request', {
-			params: {
-				api_key: apiKey,
-				type: 'product',
-				amazon_domain: 'amazon.com',
-				asin: productId,
-			},
-		});
-
-		const product = response.data.product;
-
+		const product = await getAmazonProductDetails(productId);
 		dispatch(
 			fetchAmazonProductFulfilled({
 				title: product.title,
@@ -54,6 +46,17 @@ export const fetchAmazonProduct = (affiliateLink) => async (dispatch) => {
 	} catch (error) {
 		dispatch(fetchAmazonProductRejected(error.message));
 	}
+};
+
+//? Helper Function to Extract ASIN
+const extractASINFromLink = (url) => {
+	const asinMatch = url.match(/(?:dp|gp\/product|ASIN)\/([A-Z0-9]{10})/i);
+	if (asinMatch) {
+		console.log('Extracted ASIN:', asinMatch[1]);
+	} else {
+		console.warn('Failed to extract ASIN from URL:', url);
+	}
+	return asinMatch ? asinMatch[1] : null;
 };
 
 // ! ---------- INITIAL STATE --------------
@@ -82,7 +85,8 @@ export const amazonReducer = (state = initialState, action) => {
 			return {
 				...state,
 				status: 'failed',
-				error: action.payload,
+				error:
+					action.payload || 'An error occurred while fetching product details.',
 			};
 		default:
 			return state;
